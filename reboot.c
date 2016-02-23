@@ -1,6 +1,8 @@
 #include <signal.h>
 #include <unistd.h>
 
-int main(){
-	kill(1, SIGUSR1);
+int
+main ()
+{
+	kill (1, SIGUSR1);
 }
