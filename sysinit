@@ -1,0 +1,26 @@
+echo "INIT: starting mount /proc,/sys,/dev/*"
+if [ ! -e /proc/mounts ]; then
+        mount -n -t proc /proc /proc >/dev/null 2>&1
+        mount -n -t sysfs /sys /sys >/dev/null 2>&1
+fi
+for i in `ls /sys/dev/block/`;do 
+	blockdev=$(readlink /sys/dev/block/$i)
+	mknod /dev/${blockdev##*/} b ${i%:*} ${i#*:} >/dev/null 2>&1
+done
+mount -n -o remount,rw /dev/sda2 / 
+mount /dev/sda1 /boot
+mknod /dev/urandom c 1 9 >/dev/null 2>&1
+mknod /dev/ptmx c 5 2 >/dev/null 2>&1
+mkdir /dev/pts > /dev/null 2>&1
+mount -t devpts devpts /dev/pts 
+echo "INIT: started mount"
+echo "INIT: starting network ..."
+ifconfig eth0 up >/dev/null 2>&1
+ifconfig eth1 up >/dev/null 2>&1
+ifconfig lo up >/dev/null 2>&1
+ifconfig eth0 10.37.129.3 netmask 255.255.255.0  >/dev/null 2>&1
+/sbin/dhcpcd eth1 >/dev/null 2>&1
+echo "INIT: started network"
+echo "INIT: starting sshd ..."
+/usr/sbin/sshd -f /etc/ssh/sshd_config 
+echo "INIT: started sshd"
