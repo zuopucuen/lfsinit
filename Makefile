@@ -1,8 +1,10 @@
-CC=gcc -O2 
-edit:
-	$(CC) -o init init.c
-	$(CC) -o reboot reboot.c
-	$(CC) -o shutdown shutdown.c
+CC = gcc
+CFLAGS = -O2
+MAKE = $(CC) $(CFLAGS)
+all:
+	$(MAKE) -o init init.c
+	$(MAKE) -o reboot reboot.c
+	$(MAKE) -o shutdown shutdown.c
 
 clean:
 	rm -f init reboot shutdown
